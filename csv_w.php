@@ -4,7 +4,7 @@ require_once ('conf.php');
 $conn = connectionDB ();
 
 // path where your CSV file is located
-define ( 'CSV_PATH', 'C:/Users/ManhCuong/Desktop/money/money/' );
+define ( 'CSV_PATH', 'C:/Users/e1067720/Desktop/money/money/' );
 
 // Name of your CSV file
 $csv_file_intraday = CSV_PATH . "1.intraday_w.csv";
@@ -14,6 +14,8 @@ $csv_file_harmonic = CSV_PATH . "5.harmonic_w.csv";
 $csv_file_t3trade = CSV_PATH . "6.t3trade_w.csv";
 $csv_file_chart1 = CSV_PATH . "8.chart1_w.csv";
 $csv_file_chart2 = CSV_PATH . "8.chart2_w.csv";
+$csv_file_guppy = CSV_PATH . "9.guppy_w.csv"; 
+$csv_file_rainbow = CSV_PATH . "10.rainbow_w.csv"; 
 
 if (($handle = fopen ( $csv_file_intraday, "r" )) !== FALSE) {
 	fgetcsv ( $handle );
@@ -287,6 +289,70 @@ if (($handle = fopen ( $csv_file_chart2, "r" )) !== FALSE) {
 	}
 	fclose ( $handle );
 	echo "Chart 2 weekly data successfully imported to database!!  \n";
+}
+
+if (($handle = fopen ( $csv_file_guppy, "r" )) !== FALSE) {
+	fgetcsv ( $handle );
+	while ( ($data = fgetcsv ( $handle, 1000, "," )) !== FALSE ) {
+		$num = count ( $data );
+		for($c = 0; $c < $num; $c ++) {
+			$col [$c] = $data [$c];
+		}
+		
+		$col1 = $col [0];
+		$col2 = $col [1];
+		$col3 = $col [2];
+		$col4 = $col [3];
+		
+		// SQL Query to insert data into DataBase
+		$query = "INSERT INTO `tbl_guppy`(`ticker`, `trade`, `date`, `close`)
+	 VALUES('" . $col1 . "','" . $col2 . "','" . $col3 . "','" . $col4 . "')";
+		// echo $query;
+		$result = $conn->query ( $query );
+		
+		if ($result == 0) {
+			$query = "UPDATE `tbl_guppy` 
+			SET `close`='" . $col4 . "' 
+			WHERE `ticker`='" . $col1 . "' AND `trade`='" . $col2 . "' AND `date`='" . $col3 . "'";
+			// echo $query;
+			$result = $conn->query ( $query );
+			//echo "cccc"+$result;
+		}
+	}
+	fclose ( $handle );
+	echo "9. Guppy data successfully imported to database!! \n";
+}
+
+if (($handle = fopen ( $csv_file_rainbow, "r" )) !== FALSE) {
+	fgetcsv ( $handle );
+	while ( ($data = fgetcsv ( $handle, 1000, "," )) !== FALSE ) {
+		$num = count ( $data );
+		for($c = 0; $c < $num; $c ++) {
+			$col [$c] = $data [$c];
+		}
+		
+		$col1 = $col [0];
+		$col2 = $col [1];
+		$col3 = $col [2];
+		$col4 = $col [3];
+		
+		// SQL Query to insert data into DataBase
+		$query = "INSERT INTO `tbl_rainbow`(`ticker`, `trade`, `date`, `close`)
+	 VALUES('" . $col1 . "','" . $col2 . "','" . $col3 . "','" . $col4 . "')";
+		// echo $query;
+		$result = $conn->query ( $query );
+		
+		if ($result == 0) {
+			$query = "UPDATE `tbl_rainbow` 
+			SET `close`='" . $col4 . "' 
+			WHERE `ticker`='" . $col1 . "' AND `trade`='" . $col2 . "' AND `date`='" . $col3 . "'";
+			// echo $query;
+			$result = $conn->query ( $query );
+			//echo "cccc"+$result;
+		}
+	}
+	fclose ( $handle );
+	echo "10. Rainbow data successfully imported to database!! \n";
 }
 
 $conn->close ();

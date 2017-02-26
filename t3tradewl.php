@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi-VN">
 
 <head>
 	<!-- // ket hop cach danh T3 + Nivara -->
@@ -14,6 +14,7 @@
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	
 	<style>
 	.error {color: #FF0000;}
@@ -113,11 +114,11 @@
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
 		<table style="width:55%">
 			<tr>
-				<td><h4>TỪ NGÀY: </h4></td>
-				<td><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"> </td>
+				<td style="width:180px"><h4>TỪ NGÀY: </h4></td>
+				<td style="width:100px"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"> </td>
 				<td>* </td>
-				<td><h4>ĐẾN NGÀY: </h4></td>
-				<td><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td style="width:180px"><h4>ĐẾN NGÀY: </h4></td>
+				<td style="width:100px"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>* </td>
 				<td><input type="submit" name="submit" value="Submit"  class="btn btn-primary">   </td>
 			</tr>
@@ -151,8 +152,16 @@
 	
 	$conn = connectionDB();
 	
-	$sql = "SELECT `tbl_market_exp_w`.`ticker`, `tbl_market_exp_w`.`datetime`, `tbl_market_exp_w`.`pclose` , `tbl_market_exp_w`.`volume`, `tbl_market_exp_w`.`coppock`, `tbl_nivara`.`trade` AS nivaratrade, `tbl_t3trade_w`.`trade` AS t3trade 
-FROM `tbl_t3trade_w` LEFT JOIN `tbl_market_exp_w` ON `tbl_t3trade_w`.`ticker` = `tbl_market_exp_w`.`ticker` AND `tbl_t3trade_w`.`date` = `tbl_market_exp_w`.`datetime` LEFT JOIN `tbl_nivara` ON `tbl_nivara`.`ticker` = `tbl_market_exp_w`.`ticker` AND `tbl_nivara`.`date` = `tbl_market_exp_w`.`datetime` 
+	$sql = "SELECT `tbl_market_exp_w`.`ticker`, `tbl_market_exp_w`.`datetime`, `tbl_market_exp_w`.`pclose` , `tbl_market_exp_w`.`volume`, `tbl_market_exp_w`.`coppock`
+    , `tbl_nivara_w`.`trade` AS nivaratrade, `tbl_t3trade_w`.`trade` AS t3trade, `tbl_harmonic_w`.`trade` AS harmonic 
+    , `tbl_guppy_w`.`trade` AS guppytrade, `tbl_rainbow_w`.`trade` AS rainbowtrade
+FROM `tbl_market_exp_w` 
+LEFT JOIN `tbl_t3trade_w` ON `tbl_market_exp_w`.`ticker` = `tbl_t3trade_w`.`ticker` AND `tbl_market_exp_w`.`datetime` = `tbl_t3trade_w`.`date` 
+LEFT JOIN `tbl_nivara_w` ON  `tbl_market_exp_w`.`ticker` = `tbl_nivara_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_nivara_w`.`date` 
+LEFT JOIN `tbl_harmonic_w` ON `tbl_market_exp_w`.`ticker` = `tbl_harmonic_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_harmonic_w`.`date`
+LEFT JOIN `tbl_guppy_w` ON `tbl_market_exp_w`.`ticker` = `tbl_guppy_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_guppy_w`.`date`
+LEFT JOIN `tbl_rainbow_w` ON `tbl_market_exp_w`.`ticker` = `tbl_rainbow_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_rainbow_w`.`date`
+ 
 WHERE `tbl_market_exp_w`.`volume` > 20000 AND STR_TO_DATE(`tbl_t3trade_w`.`date`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w`)
 ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_market_exp_w`.`ticker` ASC";
 	$result = $conn->query($sql);
@@ -164,10 +173,13 @@ ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_m
 			<tr>
 				<th align=\"center\">MÃ CK</th>
 				<th>NGÀY GD</th>
-				<th>KHỐI LƯỢNG</th>
-				<th>MUA/BÁN NHANH - T3</th>
-				<th>MUA/BÁN CHẬM</th>
 				<th>ĐIỂM MUA BÁN</th>
+				<th>KHỐI LƯỢNG</th>
+				<th>MUA/BÁN - T3</th>
+				<th>MUA/BÁN (Nivara)</th>
+                <th>MUA/BÁN (Harmonic)</th>
+                <th>MUA/BÁN (G)</th>
+                <th>MUA/BÁN (R)</th>
 				<th>XU HƯỚNG</th>
 			</tr>";
 		 // output data of each row
@@ -177,17 +189,24 @@ ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_m
 			 $volume = $row["volume"];
 			 $t3trade = $row["t3trade"];
 			 $nivaratrade = $row["nivaratrade"];
+             $guppytrade = $row["guppytrade"];
+             $rainbowtrade = $row["rainbowtrade"];
 			 $close = $row["pclose"];
 			 $coppock = $row["coppock"];
+             $harmonic = $row["harmonic"];
 			 
-			 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"){
+			 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"
+                     || $harmonic == "Buy" || $harmonic == "Sell"){
 				 echo "<tr>
-				 <td width=\"100px\" align=\"center\">" . $row["ticker"]. "</td>
+				 <td width=\"100px\"> <a target = '_blank' href=".viewchart($ticker)."> ". $row["ticker"]." </a></td>
 				 <td width=\"100px\" align=\"center\">" .convertDate($datetime). "</td>
+				 <td width=\"150px\" align=\"center\">" . $row["pclose"]. "</td>
 				 <td width=\"100px\" align=\"right\">" .number_format($volume). "</td>
-				 <td bgcolor=".getProperColor($t3trade)." width=\"200px\" align=\"center\">" . convertTrade($t3trade). "</td>
-				 <td bgcolor=".getProperColor($nivaratrade)." width=\"200px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
-				 <td width=\"200px\" align=\"center\">" . $row["pclose"]. "</td>
+				 <td bgcolor=".getProperColor($t3trade)." width=\"150px\" align=\"center\">" . convertTrade($t3trade). "</td>
+				 <td bgcolor=".getProperColor($nivaratrade)." width=\"150px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
+                 <td bgcolor=".getProperColor($harmonic)." width=\"150px\" align=\"center\">" . convertTrade($harmonic). "</td>
+                 <td bgcolor=".getProperColor($guppytrade)." width=\"150px\" align=\"center\">" . convertTrade($guppytrade). "</td>
+                 <td bgcolor=".getProperColor($rainbowtrade)." width=\"150px\" align=\"center\">" . convertTrade($rainbowtrade). "</td>
 				 <td bgcolor=".fillColor($coppock)." width=\"200px\" align=\"center\">" . $row["coppock"]. "</td></tr>";
 				 }
 			 }
@@ -234,6 +253,11 @@ ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_m
 		
 		return $newDateString;
 	}
+    function viewchart($ticker){
+        $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+        
+        return $newlink;
+    }
 	?>  
 	
     <!-- jQuery -->

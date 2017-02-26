@@ -85,7 +85,6 @@
 	// define variables and set to empty values
 	$pdateErr = "";
 	$pdate = $mack = "";
-	
 		
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			if (empty($_POST["pdate"])) {
@@ -106,16 +105,16 @@
 
 
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-		<table style="width:40%">
+		<table>
 			<tr> 
 				<td width="10%"></td>
-				<td style="width:32%"><h4> CHỌN NGÀY:</h4></td>
+				<td style="width:180px"><h4> CHỌN NGÀY:</h4></td>
 				<td style="width:100px"> <input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
 				<td>*</td>
 			</tr>
 			<tr>
 				<td width="10%"></td>
-				<td  style="width:32%"><h4> CHỌN MÃ CK: </h4></td>
+				<td  style="width:180px"><h4> CHỌN MÃ CK: </h4></td>
 				<td  style="width:100px"> <input type="text" name="mack" class="form-control"></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
 			</tr>

@@ -13,6 +13,7 @@
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1700px;max-width: 1700px;margin-bottom:20px;}.table

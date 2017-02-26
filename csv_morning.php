@@ -4,7 +4,7 @@ require_once ('conf.php');
 $conn = connectionDB ();
 
 // path where your CSV file is located
-define ( 'CSV_PATH', 'C:/Users/ManhCuong/Desktop/money/money/' );
+define ( 'CSV_PATH', 'C:/Users/e1067720/Desktop/money/money/' );
 
 // Name of your CSV file
 $csv_file_intraday = CSV_PATH . "1.intraday.csv";

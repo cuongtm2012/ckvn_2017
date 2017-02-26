@@ -13,6 +13,7 @@
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	
 	<style>
 	.error {color: #FF0000;}
@@ -143,13 +144,13 @@
 		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday_w` 
 			WHERE `volume` > 20000
 			AND `ticker` not in ('^VNINDEX2') 
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w`)
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w` WHERE `ticker` = '^VNINDEX')
 			ORDER BY `signal` DESC, `condition` DESC, `ticker` ASC, `medma` ASC";
 	} else{
 		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday_w` 
 			WHERE `volume` > 20000
 			AND `ticker` not in ('^VNINDEX2') 
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w`)
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w` WHERE `ticker` = '^VNINDEX')
 			AND `ticker` = '".$mack."'
 			ORDER BY `signal` DESC, `condition` DESC, `ticker` ASC, `medma` ASC";
 	}

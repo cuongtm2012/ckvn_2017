@@ -13,6 +13,7 @@
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1700px;max-width: 1700px;margin-bottom:20px;}.table
@@ -160,7 +161,7 @@
 		if($pdate == $tdate){
 			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 			FROM `tbl_market_exp_w` WHERE `volume` > 50000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w`)
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX')
 			ORDER BY rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
 		} else{
 			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
@@ -172,7 +173,7 @@
 		if($pdate == $tdate){
 			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 			FROM `tbl_market_exp_w` WHERE `volume` > 5000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w`)
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX')
 			AND `ticker` = '".$mack."'
 			ORDER BY rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
 		} else {

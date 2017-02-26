@@ -14,6 +14,7 @@
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	
 	<style>
 	.error {color: #FF0000;}
@@ -113,11 +114,11 @@
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
 		<table style="width:55%">
 			<tr>
-				<td><h4>TỪ NGÀY: </h4></td>
-				<td><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"> </td>
+				<td style="width:180px"><h4>TỪ NGÀY: </h4></td>
+				<td style="width:100px"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"> </td>
 				<td>* </td>
-				<td><h4>ĐẾN NGÀY: </h4></td>
-				<td><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td style="width:180px"><h4>ĐẾN NGÀY: </h4></td>
+				<td style="width:100px"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>* </td>
 				<td><input type="submit" name="submit" value="Submit"  class="btn btn-primary">   </td>
 			</tr>
@@ -151,23 +152,34 @@
 	
 	$conn = connectionDB();
 	
-	$sql = "SELECT `tbl_market_exp`.`ticker`, `tbl_market_exp`.`datetime`, `tbl_market_exp`.`pclose` , `tbl_market_exp`.`volume`, `tbl_market_exp`.`coppock`, `tbl_nivara`.`trade` AS nivaratrade, `tbl_t3trade`.`trade` AS t3trade 
-FROM `tbl_t3trade` LEFT JOIN `tbl_market_exp` ON `tbl_t3trade`.`ticker` = `tbl_market_exp`.`ticker` AND `tbl_t3trade`.`date` = `tbl_market_exp`.`datetime` LEFT JOIN `tbl_nivara` ON `tbl_nivara`.`ticker` = `tbl_market_exp`.`ticker` AND `tbl_nivara`.`date` = `tbl_market_exp`.`datetime` 
-WHERE `tbl_market_exp`.`volume` > 10000 AND STR_TO_DATE(`tbl_t3trade`.`date`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y') 
-ORDER BY `tbl_market_exp`.`datetime` ASC, `tbl_market_exp`.`coppock`, `tbl_market_exp`.`ticker` ASC";
+	$sql = "SELECT `tbl_market_exp`.`ticker`, `tbl_market_exp`.`datetime`, `tbl_market_exp`.`pclose` , `tbl_market_exp`.`volume`, `tbl_market_exp`.`coppock`
+    , `tbl_nivara`.`trade` AS nivaratrade, `tbl_t3trade`.`trade` AS t3trade, `tbl_harmonic`.`trade` AS harmonic 
+    , `tbl_guppy`.`trade` AS guppytrade, `tbl_rainbow`.`trade` AS rainbowtrade
+FROM `tbl_market_exp` 
+LEFT JOIN `tbl_t3trade` ON `tbl_market_exp`.`ticker` = `tbl_t3trade`.`ticker` AND `tbl_market_exp`.`datetime` = `tbl_t3trade`.`date` 
+LEFT JOIN `tbl_nivara` ON  `tbl_market_exp`.`ticker` = `tbl_nivara`.`ticker` AND  `tbl_market_exp`.`datetime` = `tbl_nivara`.`date` 
+LEFT JOIN `tbl_harmonic` ON `tbl_market_exp`.`ticker` = `tbl_harmonic`.`ticker` AND  `tbl_market_exp`.`datetime` = `tbl_harmonic`.`date`
+LEFT JOIN `tbl_guppy` ON `tbl_market_exp`.`ticker` = `tbl_guppy`.`ticker` AND  `tbl_market_exp`.`datetime` = `tbl_guppy`.`date`
+LEFT JOIN `tbl_rainbow` ON `tbl_market_exp`.`ticker` = `tbl_rainbow`.`ticker` AND  `tbl_market_exp`.`datetime` = `tbl_rainbow`.`date`
+ 
+WHERE `tbl_market_exp`.`volume` > 10000 AND STR_TO_DATE(`tbl_market_exp`.`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y') 
+ORDER BY `tbl_market_exp`.`ticker`,`tbl_market_exp`.`datetime` ASC, `tbl_market_exp`.`coppock`  ASC";
 	$result = $conn->query($sql);
 
-	 //echo $sql; 
+	// echo $sql; 
 	
 	if ($result->num_rows > 0) {
 		 echo "<table class=\"table\">
 			<tr>
 				<th align=\"center\">MÃ CK</th>
 				<th>NGÀY GD</th>
-				<th>KHỐI LƯỢNG</th>
-				<th>MUA/BÁN NHANH - T3</th>
-				<th>MUA/BÁN CHẬM</th>
 				<th>ĐIỂM MUA BÁN</th>
+				<th>KHỐI LƯỢNG</th>
+				<th>MUA/BÁN - T3</th>
+				<th>MUA/BÁN (Nivara)</th>
+                <th>MUA/BÁN (Harmonic)</th>
+                <th>MUA/BÁN (G)</th>
+                <th>MUA/BÁN (R)</th>
 				<th>XU HƯỚNG</th>
 			</tr>";
 		 // output data of each row
@@ -177,17 +189,24 @@ ORDER BY `tbl_market_exp`.`datetime` ASC, `tbl_market_exp`.`coppock`, `tbl_marke
 			 $volume = $row["volume"];
 			 $t3trade = $row["t3trade"];
 			 $nivaratrade = $row["nivaratrade"];
+             $guppytrade = $row["guppytrade"];
+             $rainbowtrade = $row["rainbowtrade"];
 			 $close = $row["pclose"];
 			 $coppock = $row["coppock"];
+             $harmonic = $row["harmonic"];
 			 
-			 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"){
+			 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"
+                     || $harmonic == "Buy" || $harmonic == "Sell"){
 				 echo "<tr>
 				 <td width=\"100px\"> <a target = '_blank' href=".viewchart($ticker)."> ". $row["ticker"]." </a></td>
 				 <td width=\"100px\" align=\"center\">" .convertDate($datetime). "</td>
+				 <td width=\"150px\" align=\"center\">" . $row["pclose"]. "</td>
 				 <td width=\"100px\" align=\"right\">" .number_format($volume). "</td>
-				 <td bgcolor=".getProperColor($t3trade)." width=\"200px\" align=\"center\">" . convertTrade($t3trade). "</td>
-				 <td bgcolor=".getProperColor($nivaratrade)." width=\"200px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
-				 <td width=\"200px\" align=\"center\">" . $row["pclose"]. "</td>
+				 <td bgcolor=".getProperColor($t3trade)." width=\"150px\" align=\"center\">" . convertTrade($t3trade). "</td>
+				 <td bgcolor=".getProperColor($nivaratrade)." width=\"150px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
+                 <td bgcolor=".getProperColor($harmonic)." width=\"150px\" align=\"center\">" . convertTrade($harmonic). "</td>
+                 <td bgcolor=".getProperColor($guppytrade)." width=\"150px\" align=\"center\">" . convertTrade($guppytrade). "</td>
+                 <td bgcolor=".getProperColor($rainbowtrade)." width=\"150px\" align=\"center\">" . convertTrade($rainbowtrade). "</td>
 				 <td bgcolor=".fillColor($coppock)." width=\"200px\" align=\"center\">" . $row["coppock"]. "</td></tr>";
 				 }
 			 }

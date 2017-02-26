@@ -10,7 +10,24 @@
 	
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min - module.css" rel="stylesheet">
+    
+    <!-- bootstrap css theme -->
+    <link rel="stylesheet" href="css/theme.bootstrap_4.css">
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.tablesorter.js"></script>
+    <script src="js/jquery.tablesorter.widgets.js"></script>
+    <script src="js/tablesorter.js"></script>
+    
+    <!-- pager plugin -->
+    <link rel="stylesheet" href="css/jquery.tablesorter.pager.css">
+    <script src="js/jquery.tablesorter.pager.js"></script>
+    <style>
+    .tablesorter-pager .btn-group-sm .btn {
+      font-size: 1.2em; /* make pager arrows more visible */
+    }
+    </style>
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
 	<style>
@@ -106,20 +123,20 @@
 	?>
 
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-		<table style="width:60%">
+		<table >
 			<tr> 
 				<td width="10%"></td>
-				<td   style="width:18%"><h4>TỪ NGÀY :</h4> </td>
-				<td   style="width:20%"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
+				<td   style="width:150px"><h4>TỪ NGÀY :</h4> </td>
+				<td   style="width:180px"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
 				<td>*</td>
-				<td   style="width:18%"><h4>ĐẾN NGÀY : </h4></td>
-				<td   style="width:20%"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td   style="width:150px"><h4>ĐẾN NGÀY : </h4></td>
+				<td   style="width:180px"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>*</td>
 			</tr>
 			<tr>
 				<td width="10%"></td>
-				<td  style="width:18%"><h4> CHỌN MÃ CK: </h4></td>
-				<td> <input type="text" name="mack" class="form-control"></td>
+				<td  style="width:150px"><h4> CHỌN MÃ CK: </h4></td>
+				<td  style="width:180px"> <input type="text" name="mack" class="form-control"></td>
 				<td></td>
 				<td></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
