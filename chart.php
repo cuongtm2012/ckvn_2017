@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="vi-VN">
 
 <head>
     <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
@@ -106,7 +106,7 @@
 	  <table style="width:30%">
 		<tr> 
 		   <td><h4>CHỌN NGÀY:</h4> </td>
-		   <td><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
+		   <td><input type="date" name="pdate" id="theDate" value="<?php echo $pdate;?>" class="form-control"></td>
 		   <td>*</td>
 		   <td align="center"><input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
 		</tr>
@@ -271,7 +271,14 @@
 	}
     
     function viewchart($ticker){
-        $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+        if (strpos($ticker, '^') !== FALSE)
+        {
+         $newlink = "http://www.cophieu68.vn/snapshot.php?id=" . $ticker;
+        }
+        else
+        {
+         $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+        }
         
         return $newlink;
     }
@@ -287,5 +294,8 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    
 </body>
 </html>

@@ -115,10 +115,10 @@
 		<table style="width:55%">
 			<tr>
 				<td style="width:180px"><h4>TỪ NGÀY: </h4></td>
-				<td style="width:100px"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"> </td>
+				<td style="width:100px"><input type="date" name="pdate" id="theDate" value="<?php echo $pdate;?>" class="form-control"> </td>
 				<td>* </td>
 				<td style="width:180px"><h4>ĐẾN NGÀY: </h4></td>
-				<td style="width:100px"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td style="width:100px"><input type="date" name="tdate" id="theDate1" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>* </td>
 				<td><input type="submit" name="submit" value="Submit"  class="btn btn-primary">   </td>
 			</tr>
@@ -265,5 +265,8 @@ ORDER BY `tbl_market_exp`.`ticker`,`tbl_market_exp`.`datetime` ASC, `tbl_market_
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    
 </body>
 </html>

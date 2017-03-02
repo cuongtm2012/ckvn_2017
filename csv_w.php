@@ -305,13 +305,13 @@ if (($handle = fopen ( $csv_file_guppy, "r" )) !== FALSE) {
 		$col4 = $col [3];
 		
 		// SQL Query to insert data into DataBase
-		$query = "INSERT INTO `tbl_guppy`(`ticker`, `trade`, `date`, `close`)
+		$query = "INSERT INTO `tbl_guppy_w`(`ticker`, `trade`, `date`, `close`)
 	 VALUES('" . $col1 . "','" . $col2 . "','" . $col3 . "','" . $col4 . "')";
 		// echo $query;
 		$result = $conn->query ( $query );
 		
 		if ($result == 0) {
-			$query = "UPDATE `tbl_guppy` 
+			$query = "UPDATE `tbl_guppy_w` 
 			SET `close`='" . $col4 . "' 
 			WHERE `ticker`='" . $col1 . "' AND `trade`='" . $col2 . "' AND `date`='" . $col3 . "'";
 			// echo $query;
@@ -337,13 +337,13 @@ if (($handle = fopen ( $csv_file_rainbow, "r" )) !== FALSE) {
 		$col4 = $col [3];
 		
 		// SQL Query to insert data into DataBase
-		$query = "INSERT INTO `tbl_rainbow`(`ticker`, `trade`, `date`, `close`)
+		$query = "INSERT INTO `tbl_rainbow_w`(`ticker`, `trade`, `date`, `close`)
 	 VALUES('" . $col1 . "','" . $col2 . "','" . $col3 . "','" . $col4 . "')";
 		// echo $query;
 		$result = $conn->query ( $query );
 		
 		if ($result == 0) {
-			$query = "UPDATE `tbl_rainbow` 
+			$query = "UPDATE `tbl_rainbow_w` 
 			SET `close`='" . $col4 . "' 
 			WHERE `ticker`='" . $col1 . "' AND `trade`='" . $col2 . "' AND `date`='" . $col3 . "'";
 			// echo $query;

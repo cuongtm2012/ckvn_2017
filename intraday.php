@@ -101,6 +101,8 @@
 		  $data = htmlspecialchars($data);
 		  return $data;
 		}
+        
+        
 	?>
 
 
@@ -109,7 +111,7 @@
 			<tr> 
 				<td width="10%"></td>
 				<td style="width:180px"><h4> CHỌN NGÀY:</h4></td>
-				<td style="width:100px"> <input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
+				<td style="width:100px"> <input type="date" name="pdate" id="theDate" value="<?php echo $pdate;?>" class="form-control"></td>
 				<td>*</td>
 			</tr>
 			<tr>
@@ -304,6 +306,8 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="js/thejsfile.js"></script>
     
 </body>
 </html>

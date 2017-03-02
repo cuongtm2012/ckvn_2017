@@ -166,7 +166,7 @@ WHERE `tbl_market_exp_w`.`volume` > 20000 AND STR_TO_DATE(`tbl_t3trade_w`.`date`
 ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_market_exp_w`.`ticker` ASC";
 	$result = $conn->query($sql);
 
-	 //echo $sql; 
+	 echo $sql; 
 	
 	if ($result->num_rows > 0) {
 		 echo "<table class=\"table\">

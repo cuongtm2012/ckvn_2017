@@ -127,10 +127,10 @@
 			<tr> 
 				<td width="10%"></td>
 				<td   style="width:150px"><h4>TỪ NGÀY :</h4> </td>
-				<td   style="width:180px"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
+				<td   style="width:180px"><input type="date" name="pdate" id="theDate" value="<?php echo $pdate;?>" class="form-control"></td>
 				<td>*</td>
 				<td   style="width:150px"><h4>ĐẾN NGÀY : </h4></td>
-				<td   style="width:180px"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td   style="width:180px"><input type="date" name="tdate" id="theDate1" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>*</td>
 			</tr>
 			<tr>
@@ -402,5 +402,8 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    
 </body>
 </html>
