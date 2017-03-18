@@ -161,6 +161,8 @@ if (($handle = fopen ( $csv_file_harmonic, "r" )) !== FALSE) {
 		$col3 = $col [2];
 		$col4 = $col [3];
 		
+        if($col2 != "Cover" && $col2 != "Short" ){
+            
 		// SQL Query to insert data into DataBase
 		$query = "INSERT INTO `tbl_harmonic_w`(`ticker`, `trade`, `date`, `close`)
 	 VALUES('" . $col1 . "','" . $col2 . "','" . $col3 . "','" . $col4 . "')";
@@ -175,6 +177,7 @@ if (($handle = fopen ( $csv_file_harmonic, "r" )) !== FALSE) {
 			$result = $conn->query ( $query );
 			//echo "cccc"+$result;
 		}
+        }
 	}
 	fclose ( $handle );
 	echo "Harmonic weekly data successfully imported to database!!";

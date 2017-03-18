@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi-VN">
 
 <head>
@@ -10,47 +10,19 @@
 	
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min - module.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
-    
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/moment.min.js"></script>
-    <script src="js/bootstrap-datetimepicker.min.js"></script>
-    <script src="js/bootstrap.js"></script>
-    
+
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
-    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1500px;max-width: 1500px;margin-bottom:20px;}.table
 	.navbar-nav{font-size: 14px;}.navbar-nav
-    .bootstrap-datetimepicker-widget tr:hover {
-        background-color: #808080;
-    }
 	</style>
 	
-    <script>
-        $(document).ready(function(){
-
-          //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
-          $("#weeklyDatePicker").datetimepicker({
-              format: 'MM-DD-YYYY'
-          });
-        
-           //Get the value of Start and End of Week
-          $('#weeklyDatePicker').on('dp.change', function (e) {
-              var value = $("#weeklyDatePicker").val();
-              var firstDate = moment(value, "MM-DD-YYYY").day(0).format("MM-DD-YYYY");
-              var lastDate =  moment(value, "MM-DD-YYYY").day(6).format("MM-DD-YYYY");
-              $("#weeklyDatePicker").val(firstDate + " - " + lastDate);
-          });
-        });
-    </script>
 </head>
 <body  id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
-    <!-- Navigation -->
+     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header page-scroll">
@@ -111,14 +83,16 @@
 	</br>
 	<?php
 	// define variables and set to empty values
-	$weeklyDatePickerErr = "";
-	$weeklyDatePicker = $mack = "";
-    $fdate = $pdate = "";
-	
+	$pdateErr = "";
+	$pdate = $mack = "";
 		
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
-			$weeklyDatePicker = test_input($_POST["weeklyDatePicker"]);
-			$mack = test_input($_POST["mack"]);
+			if (empty($_POST["pdate"])) {
+				$pdateErr = "Yêu cầu nhập ngày bắt đầu. ";
+			  } else {
+			  	$pdate = test_input($_POST["pdate"]);
+				$mack = test_input($_POST["mack"]);
+			  }
 		}
 	  
 	  function test_input($data) {
@@ -127,36 +101,29 @@
 		  $data = htmlspecialchars($data);
 		  return $data;
 		}
+        
+        
 	?>
 
 
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-
-  </div>
-    	<table>
+		<table>
 			<tr> 
-				<td></td>
-				<td><h4> CHỌN NGÀY:</h4></td>
-				<td> 
-                    <div class="row">
-                        <div class="col-sm-6 form-group" style="width:230px">
-                            <div class="input-group" id="DateDemo">
-                              <input type='text' id='weeklyDatePicker'  name="weeklyDatePicker" value="<?php echo weeklyDatePicker;?>"  placeholder="Select Week" class="form-control"/>
-                          </div>
-                    </div>
-                </td>
+				<td width="10%"></td>
+				<td style="width:180px"><h4> CHỌN NGÀY:</h4></td>
+				<td style="width:100px"> <input type="date" name="pdate" id="theDate" value="<?php echo $pdate;?>" class="form-control"></td>
 				<td>*</td>
 			</tr>
 			<tr>
-				<td></td>
-				<td><h4> CHỌN MÃ CK: </h4></td>
-				<td> <input type="text" name="mack" class="form-control"></td>
+				<td width="10%"></td>
+				<td  style="width:180px"><h4> CHỌN MÃ CK: </h4></td>
+				<td  style="width:100px"> <input type="text" name="mack" class="form-control"></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
 			</tr>
 		</table>	  
 		<table>
 			<tr> 
-				<td> <span class="error"><?php echo $weeklyDatePickerErr;?></span></td>
+				<td> <span class="error"><?php echo $pdateErr;?></span></td>
 			</tr>
 		</table>
 	</form>
@@ -166,39 +133,28 @@
 	<?php
 	require_once('conf.php');
 	
-	if($weeklyDatePicker != NULL){
-	   
-       $fdate = substr($weeklyDatePicker, 0, 10);
-       $tdate = substr($weeklyDatePicker, 12);
-
-	   $myDateTime = DateTime::createFromFormat('m-d-Y', $fdate); 
-	   $fdate = $myDateTime->format('m/d/Y');
-        
-       $myDateTime = DateTime::createFromFormat('m-d-Y', trim($tdate));
-	   $tdate = $myDateTime->format('m/d/Y');
+	if($pdate != NULL){
+		$myDateTime = DateTime::createFromFormat('Y-m-d', $pdate);
+		$pdate = $myDateTime->format('m/d/Y');
 	} else {
-		$tdate = new DateTime();
-		$tdate = $tdate->format('m/d/Y');
-        
-        $myfdate = new DateTime();
-		$myfdate = $myfdate->format('m/d/Y');
+		$pdate = new DateTime();
+		$pdate = $pdate->format('m/d/Y');
 	}
 	
 	$conn = connectionDB();
 	
 	//echo $mack;
 	if(empty($mack)){
-		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday_w` 
-			WHERE `volume` > 20000
+		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday` 
+			WHERE `volume` > 10000
 			AND `ticker` not in ('^VNINDEX2') 
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w` WHERE `ticker` = '^VNINDEX'
-            AND STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y'))
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = STR_TO_DATE('".$pdate."','%m/%d/%Y')
 			ORDER BY `signal` DESC, `condition` DESC, `ticker` ASC, `medma` ASC";
 	} else{
-		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday_w` 
-			WHERE `volume` > 20000
+		$sql = "SELECT `ticker`, `datetime`, `signal`, `condition`, `close`, `volume`, `bband`, `medma`, `longma`, `medmalongma`, `macd`, `macdsignal`, `aroon`, `stochastic`, `rsi14`, `mfi`, `score` FROM `tbl_intraday` 
+			WHERE `volume` > 10000
 			AND `ticker` not in ('^VNINDEX2') 
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_intraday_w` WHERE `ticker` = '^VNINDEX')
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = STR_TO_DATE('".$pdate."','%m/%d/%Y')
 			AND `ticker` = '".$mack."'
 			ORDER BY `signal` DESC, `condition` DESC, `ticker` ASC, `medma` ASC";
 	}
@@ -243,17 +199,14 @@
 			 $score = $row["score"];
 			 
 				 echo "<tr>
-				 <td width=\"100px\">" . $row["ticker"]. "</td>
+				 <td width=\"100px\"> <a target = '_blank' href=".viewchart($ticker)."> ". $row["ticker"]." </a></td>
 				 <td width=\"100px\">" .convertDate($datetime). "</td>
 				 <td width=\"320px\" bgcolor=".fillColor($signal)." width=\"300px\">" . $row["signal"]. "</td>
-
 				 <td align=\"right\">" . $row["close"]. "</td>
 				 <td align=\"right\">" . number_format($row["volume"]). "</td>
 				 <td bgcolor=".getProperColor($medma)." align=\"center\">" . $row["medma"]. "</td>
 				 <td bgcolor=".getProperColor($longma)."  align=\"center\">" . $row["longma"]. "</td>
-
 				 <td bgcolor=".getProperColor($macd)."  align=\"center\">" . $row["macd"]. "</td>
-
 				 <td bgcolor=".getProperColor($aroon)."  align=\"center\">" . $row["aroon"]. "</td>
 				 <td bgcolor=".getProperColor($stochastic)."  align=\"center\">" . $row["stochastic"]. "</td>
 				 <td width=\"80px\" bgcolor=".getProperColor($mfi)."   align=\"center\">" . $row["mfi"]. "</td>
@@ -325,13 +278,36 @@
 			return 	'#FFFFFF';
 	}
 	
+	
 	function convertDate($dateString){
 		$myDateTime = DateTime::createFromFormat('m/d/Y', $dateString);
 		$newDateString = $myDateTime->format('d/m/Y');
 		
 		return $newDateString;
 	}
+    
+    function viewchart($ticker){
+        if (strpos($ticker, '^') !== FALSE)
+        {
+         $newlink = "http://www.cophieu68.vn/snapshot.php?id=" . $ticker;
+        }
+        else
+        {
+         $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+        }
+        
+        return $newlink;
+    }
+    
 
 	?>  
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    
 </body>
 </html>

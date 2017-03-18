@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi-VN">
 
 <head>
     <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
@@ -10,6 +10,13 @@
 	
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min - module.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
@@ -17,7 +24,29 @@
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1380px;max-width: 1380px;margin-bottom:20px;}.table
+	.navbar-nav{font-size: 14px;}.navbar-nav
+    .bootstrap-datetimepicker-widget tr:hover {
+        background-color: #808080;
+    }
 	</style>
+	
+    <script>
+        $(document).ready(function(){
+
+          //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
+          $("#weeklyDatePicker").datetimepicker({
+              format: 'MM-DD-YYYY'
+          });
+        
+           //Get the value of Start and End of Week
+          $('#weeklyDatePicker').on('dp.change', function (e) {
+              var value = $("#weeklyDatePicker").val();
+              var firstDate = moment(value, "MM-DD-YYYY").day(0).format("MM-DD-YYYY");
+              var lastDate =  moment(value, "MM-DD-YYYY").day(6).format("MM-DD-YYYY");
+              $("#weeklyDatePicker").val(firstDate + " - " + lastDate);
+          });
+        });
+    </script>
 </head>
 <body  id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
  <!-- Navigation -->
@@ -82,16 +111,15 @@
 
 	<?php
 	// define variables and set to empty values
-	$nameErr = "";
-	$pdate = "";
+	$weeklyDatePickerErr = "";
+	$weeklyDatePicker = $mack = "";
+    $fdate = $pdate = "";
+	
 		
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		  if (empty($_POST["pdate"])) {
-			$nameErr = "Yêu cầu chọn ngày.  ";
-		  } else {
-			$pdate = test_input($_POST["pdate"]);
-		  }
-	  }
+			$weeklyDatePicker = test_input($_POST["weeklyDatePicker"]);
+			$mack = test_input($_POST["mack"]);
+		}
 	  
 	  function test_input($data) {
 		  $data = trim($data);
@@ -103,16 +131,33 @@
 
 
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-	  <table style="width:30%">
-		<tr> 
-		   <td><h4>CHỌN NGÀY:</h4> </td>
-		   <td><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
-		   <td>*</td>
-		   <td align="center"><input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
-		</tr>
-		</table>
+
+  </div>
+    	<table>
+			<tr> 
+				<td></td>
+				<td><h4> CHỌN NGÀY:</h4></td>
+				<td> 
+                    <div class="row">
+                        <div class="col-sm-6 form-group" style="width:230px">
+                            <div class="input-group" id="DateDemo">
+                              <input type='text' id='weeklyDatePicker'  name="weeklyDatePicker" value="<?php echo weeklyDatePicker;?>"  placeholder="Select Week" class="form-control"/>
+                          </div>
+                    </div>
+                </td>
+				<td>*</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><h4> CHỌN MÃ CK: </h4></td>
+				<td> <input type="text" name="mack" class="form-control"></td>
+				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
+			</tr>
+		</table>	  
 		<table>
-			<tr><span class="error"><?php echo $nameErr;?></span> </tr>
+			<tr> 
+				<td> <span class="error"><?php echo $weeklyDatePickerErr;?></span></td>
+			</tr>
 		</table>
 	</form>
 
@@ -121,12 +166,22 @@
 	<?php
 	require_once('conf.php');
 	
-	if($pdate != NULL){
-		$myDateTime = DateTime::createFromFormat('Y-m-d', $pdate);
-		$pdate = $myDateTime->format('m/d/Y');
+	if($weeklyDatePicker != NULL){
+	   
+       $fdate = substr($weeklyDatePicker, 0, 10);
+       $tdate = substr($weeklyDatePicker, 12);
+
+	   $myDateTime = DateTime::createFromFormat('m-d-Y', $fdate); 
+	   $fdate = $myDateTime->format('m/d/Y');
+        
+       $myDateTime = DateTime::createFromFormat('m-d-Y', trim($tdate));
+	   $tdate = $myDateTime->format('m/d/Y');
 	} else {
-		$pdate = new DateTime();
-		$pdate = $pdate->format('m/d/Y');
+		$tdate = new DateTime();
+		$tdate = $tdate->format('m/d/Y');
+        
+        $myfdate = new DateTime();
+		$myfdate = $myfdate->format('m/d/Y');
 	}
 	
 	$conn = connectionDB();
@@ -134,7 +189,8 @@
 	$sql = "SELECT `ticker`, `datetime`, `candle`, `close`, `change`, `volume`, `buysell`, `supportline`, `resistanceline`, `pattern` 
 	FROM `tbl_chart_w`
 	WHERE `volume` > 50000
-	AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_chart_w`)
+	AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_chart_w`
+	WHERE STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y'))
 	ORDER BY `pattern` DESC, `change` DESC, `buysell` ASC";
 	$result = $conn->query($sql);
 	
@@ -270,14 +326,5 @@
 		return $newDateString;
 	}
 	?>  
-	
-	
-	
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>

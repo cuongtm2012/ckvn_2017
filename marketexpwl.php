@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi-VN">
 
 <head>
     <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
@@ -10,14 +10,44 @@
 	
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min - module.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
 
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
+	
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1700px;max-width: 1700px;margin-bottom:20px;}.table
+	.navbar-nav{font-size: 14px;}.navbar-nav
+    .bootstrap-datetimepicker-widget tr:hover {
+        background-color: #808080;
+    }
 	</style>
+	
+    <script>
+        $(document).ready(function(){
+
+          //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
+          $("#weeklyDatePicker").datetimepicker({
+              format: 'MM-DD-YYYY'
+          });
+        
+           //Get the value of Start and End of Week
+          $('#weeklyDatePicker').on('dp.change', function (e) {
+              var value = $("#weeklyDatePicker").val();
+              var firstDate = moment(value, "MM-DD-YYYY").day(0).format("MM-DD-YYYY");
+              var lastDate =  moment(value, "MM-DD-YYYY").day(6).format("MM-DD-YYYY");
+              $("#weeklyDatePicker").val(firstDate + " - " + lastDate);
+          });
+        });
+    </script>
 </head>
 <body  id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
     <!-- Navigation -->
@@ -82,21 +112,15 @@
 
 	<?php
 	// define variables and set to empty values
-	$pdateErr = $tdateErr = "";
-	$pdate = "";
-	$tdate = "";
+	$weeklyDatePickerErr = "";
+	$weeklyDatePicker = $mack = "";
+    $fdate = $pdate = "";
+	
 		
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
-			  if (empty($_POST["pdate"])) {
-				$pdateErr = "Yêu cầu nhập ngày bắt đầu. ";
-			  } else if (empty($_POST["tdate"])) {
-				$tdateErr = "Yêu cầu nhập ngày kết thúc. ";
-			  } else {
-				$pdate = test_input($_POST["pdate"]);
-				$tdate = test_input($_POST["tdate"]);
-				$mack = test_input($_POST["mack"]);
-			  }
-	  }
+			$weeklyDatePicker = test_input($_POST["weeklyDatePicker"]);
+			$mack = test_input($_POST["mack"]);
+		}
 	  
 	  function test_input($data) {
 		  $data = trim($data);
@@ -108,29 +132,32 @@
 
 
 	<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
-		<table style="width:60%">
+
+  </div>
+    	<table>
 			<tr> 
-				<td width="10%"></td>
-				<td   style="width:18%"><h4>TỪ NGÀY :</h4> </td>
-				<td   style="width:20%"><input type="date" name="pdate" value="<?php echo $pdate;?>" class="form-control"></td>
-				<td>*</td>
-				<td   style="width:18%"><h4>ĐẾN NGÀY : </h4></td>
-				<td   style="width:20%"><input type="date" name="tdate" value="<?php echo $tdate;?>" class="form-control"> </td>
+				<td></td>
+				<td><h4> CHỌN NGÀY:</h4></td>
+				<td> 
+                    <div class="row">
+                        <div class="col-sm-6 form-group" style="width:230px">
+                            <div class="input-group" id="DateDemo">
+                              <input type='text' id='weeklyDatePicker'  name="weeklyDatePicker" value="<?php echo weeklyDatePicker;?>"  placeholder="Select Week" class="form-control"/>
+                          </div>
+                    </div>
+                </td>
 				<td>*</td>
 			</tr>
 			<tr>
-				<td width="10%"></td>
-				<td  style="width:18%"><h4> CHỌN MÃ CK: </h4></td>
+				<td></td>
+				<td><h4> CHỌN MÃ CK: </h4></td>
 				<td> <input type="text" name="mack" class="form-control"></td>
-				<td></td>
-				<td></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
-				<td></td>
 			</tr>
-		</table>
+		</table>	  
 		<table>
-			<tr>
-				<td><span class="error"><?php echo $pdateErr;?> <?php echo $tdateErr;?></span></td>
+			<tr> 
+				<td> <span class="error"><?php echo $weeklyDatePickerErr;?></span></td>
 			</tr>
 		</table>
 	</form>
@@ -140,50 +167,39 @@
 	<?php
 	require_once('conf.php');
 	
-	if($pdate != NULL){
-		$myDateTime = DateTime::createFromFormat('Y-m-d', $pdate);
-		$pdate = $myDateTime->format('m/d/Y');
-	} else {
-		$pdate = new DateTime();
-		$pdate = $pdate->format('m/d/Y');
-	}
-	if($tdate != NULL){
-		$myDateTime = DateTime::createFromFormat('Y-m-d', $tdate);
-		$tdate = $myDateTime->format('m/d/Y');
+	if($weeklyDatePicker != NULL){
+	   
+       $fdate = substr($weeklyDatePicker, 0, 10);
+       $tdate = substr($weeklyDatePicker, 12);
+
+	   $myDateTime = DateTime::createFromFormat('m-d-Y', $fdate); 
+	   $fdate = $myDateTime->format('m/d/Y');
+        
+       $myDateTime = DateTime::createFromFormat('m-d-Y', trim($tdate));
+	   $tdate = $myDateTime->format('m/d/Y');
 	} else {
 		$tdate = new DateTime();
 		$tdate = $tdate->format('m/d/Y');
+        
+        $myfdate = new DateTime();
+		$myfdate = $myfdate->format('m/d/Y');
 	}
 	
 	$conn = connectionDB();
 
 	if(empty($mack)){
-		if($pdate == $tdate){
 			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 			FROM `tbl_market_exp_w` WHERE `volume` > 50000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX')
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX'
+            AND (STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y')))
 			ORDER BY rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
-		} else{
-			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
-			FROM `tbl_market_exp_w` WHERE `volume` > 50000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y')
-			ORDER BY STR_TO_DATE(`datetime`,'%m/%d/%Y') DESC, rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
-		}
 	} else {
-		if($pdate == $tdate){
 			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 			FROM `tbl_market_exp_w` WHERE `volume` > 5000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX')
+			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w` WHERE `ticker` = '^VNINDEX'
+            AND (STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y')))
 			AND `ticker` = '".$mack."'
 			ORDER BY rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
-		} else {
-			$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
-			FROM `tbl_market_exp_w` WHERE `volume` > 5000 AND `pclose` > 1
-			AND STR_TO_DATE(`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y')
-			AND `ticker` = '".$mack."'
-			ORDER BY STR_TO_DATE(`datetime`,'%m/%d/%Y') DESC, rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
-		}
-		
 	}
 	
 	$result = $conn->query($sql);
@@ -373,14 +389,5 @@
 			return '#FFFFFF';
 	}
 	?>  
-	
-	
-	
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
 </body>
 </html>

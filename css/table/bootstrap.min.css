@@ -2350,9 +2350,9 @@ th {
     text-align: center
 }
 .table {
-    width: 1380px;
-    max-width: 1380px;
-    margin-bottom: 20px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px
 }
 .table>tbody>tr>td,
 .table>tbody>tr>th,
