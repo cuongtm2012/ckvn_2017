@@ -2,21 +2,42 @@
 <html lang="vi-VN">
 
 <head>
-    <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
+	<meta name="keywords" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
 	
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min - module.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="css/table/bootstrap.min.css">
+    <link rel="stylesheet" href="css/table/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
+    
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/table/jquery-1.12.4.js"></script>
+    <script src="js/table/jquery.dataTables.min.js"></script>
+    <script src="js/table/dataTables.bootstrap.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    <script>
+	$(document).ready(function() {
+		$('#example').DataTable();
+	} );
+    </script>
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	<style>
-	.error {color: #FF0000;}
-    .table{width: 1700px;max-width: 1700px;margin-bottom:20px;}.table
+		.error {color: #FF0000;}
+		.table{width: 1700px;max-width: 1700px;margin-bottom:20px;}.table
+		.navbar-nav{font-size: 14px;}.navbar-nav
+		.bootstrap-datetimepicker-widget tr:hover {
+			background-color: #808080;
+    }
 	</style>
 </head>
 <body  id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
@@ -70,6 +91,7 @@
                         <ul class="dropdown-menu">
 							<li><a href="danhmuc.php">Danh mục theo dõi</a></li>
 							<li><a href="tinhieutot.php">Danh mục tín hiệu tốt</a></li>
+                            <li><a target = '_blank' href="https://docs.google.com/forms/d/e/1FAIpQLSfmLX6GM2-wctqkSPVWiU9El2SUyjGC2-u7o-nCUNXrBpnkaA/viewform?c=0&w=1">Check list MUA</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -81,54 +103,98 @@
 	</br>
 
 	<?php
-	// define variables and set to empty values
-	$pdateErr = $tdateErr = "";
-	$pdate = "";
-	$tdate = "";
-		
-		if ($_SERVER["REQUEST_METHOD"] == "POST") {
-			  if (empty($_POST["pdate"])) {
-				$pdateErr = "Yêu cầu nhập ngày bắt đầu. ";
-			  } else if (empty($_POST["tdate"])) {
-				$tdateErr = "Yêu cầu nhập ngày kết thúc. ";
-			  } else {
-				$pdate = test_input($_POST["pdate"]);
-				$tdate = test_input($_POST["tdate"]);
-				$mack = test_input($_POST["mack"]);
-			  }
-	  }
-	  
-	  function test_input($data) {
-		  $data = trim($data);
-		  $data = stripslashes($data);
-		  $data = htmlspecialchars($data);
-		  return $data;
+		// define variables and set to empty values
+		$pdateErr = $tdateErr = "";
+		$pdate = "";
+		$tdate = "";
+			
+
+		function getProperColor($var)
+		{
+			if ($var == "TANG")
+				return '#ddffcc';
+			else if ($var == "GIAM")
+				return '#ffcccc';
+			else if ($var == "QUA BAN")
+				return '#FFFF00';
+			else if ($var == "QUA MUA")
+				return '#FF7F50';
+			else if ($var == "TICH LUY")
+				return '#ffff80';
+			else if ($var == "-=MANH=-")
+				return '#ebadd6';
+			else if ($var == "-=YEU=-")
+				return '#ccccff';
+			else if ($var == "-=BAN=-")
+				return '#ff9999';
+			else if ($var == "-=MUA=-")
+				return '#9fff80';
+			else if ($var == "PHAN PHOI")
+				return '#ff8080';
+			else if ($var == "UPTREND")
+				return '#9fff80';
+			else if ($var == "HOI PHUC")
+				return '#b3ffcc';
+			else if ($var == "PHONG BI")
+				return '#ccb3ff';
+			else if ($var == "KHONG CUNG")
+				return '#ffff66';
+			else if ($var == "UpT Sideways")
+				return '#ddffcc';
+			else if ($var == "DownTrend")
+				return '#ff0000';
+			else if ($var == "DnT Sideways")
+				return '#ffcccc';
+			else
+				return 	'#FFFFFF';
 		}
+
+		function convertDate($dateString){
+			$myDateTime = DateTime::createFromFormat('m/d/Y', $dateString);
+			$newDateString = $myDateTime->format('d/m/Y');
+			
+			return $newDateString;
+		}
+		function findTicker($vpazone, $vpastatus, $isignal, $t3signal, $emashort, $emamid, $coppock, $arsi, $stochastic, $mfi, $ematrend){
+			if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "-=MUA=-" || $t3signal == "-=MUA=-" || $emashort == "-=MUA=-") && ($coppock == "UPTREND" || $coppock == "UpT Sideways"))
+				return '#b3ff99';
+			else if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "-=MUA=-" || $t3signal == "-=MUA=-" || $emashort == "-=MUA=-"))
+				return '#ff9900';
+			else if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "TANG"))
+				return '#f2ffcc';
+			else if ($vpazone == "TICH LUY" && $emashort == "TANG" && ($coppock == "UPTREND" || $coppock == "UpT Sideways") && ($stochastic != "GIAM") )
+				return '#ddffcc';
+			else if ($emashort == "TANG" && $emamid == "TANG" && $arsi == "QUA BAN")
+				return '#ffffb3';
+			else if ($vpazone == "PHAN PHOI" && ($isignal == "GIAM" || $isignal == "-=BAN=-") && ($t3signal == "-=BAN=-") && ($stochastic == "GIAM") && ($arsi == "QUA MUA" || $mfi == "QUA MUA"))
+				return '#ffcccc';
+			else if ($vpazone == "PHAN PHOI" && ($isignal == "GIAM" || $isignal == "-=BAN=-"))
+				return '#ffcccc';
+			else if ($vpazone == "TICH LUY" && ($isignal == "-=MUA=-" || $t3signal == "-=MUA=-") && $ematrend == "PHONG BI")
+				return '#e0e0d1';
+			else if ($isignal == "-=MUA=-" && $t3signal == "-=MUA=-" && $ematrend != "GIAM")
+				return '#ff9900';
+			else if ($emashort == "-=MUA=-" && $emamid == "TANG" && $ematrend == "TANG" && $isignal == "TANG" && $vpazone != "PHAN PHOI")
+				return '#ff9900';
+			else if ((($emashort == "-=MUA=-" || $emashort == "TANG" || $vpastatus == "-=MANH=-") && $isignal == "-=MUA=-") && $vpazone != "PHAN PHOI" )
+				return '#ff9900';
+			else
+				return '#FFFFFF';
+		}
+		
+		function viewchart($ticker){
+			$newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+		
+			return $newlink;
+		}
+
 	?>
 
 	</br>
 	
-	<?php
-	require_once('conf.php');
-	
-	$conn = connectionDB();
-
-    $todayDate = new DateTime();
-	$todayDate = $todayDate->format('m/d/Y');
-    
-	$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank 
-    FROM `tbl_market_exp` WHERE `volume` > 50000 AND `pclose` > 1 
-    AND (STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN (STR_TO_DATE('".$todayDate."','%m/%d/%Y') - 3) AND STR_TO_DATE('".$todayDate."','%m/%d/%Y')) 
-    AND `coppock` IN ('UPTREND','UpT Sideways') 
-    AND (`isignal` = '-=MUA=-' OR `t3signal` = '-=MUA=-' OR `emashort` = '-=MUA=-' OR `emamid` = '-=MUA=-') 
-    ORDER BY `datetime` DESC";
-	
-	$result = $conn->query($sql);
-
-    //echo $sql; 
-	if ($result->num_rows > 0) {
-		 echo "<table class=\"table\">
-			<tr>
+	<table id="example" class="table table-striped table-bordered" cellspacing="0">
+	<thead>
+		<tr>
 				<th>MÃ CK</th>
 				<th>NGÀY GD</th>
 				<th>GIÁ CHỐT</th>
@@ -148,7 +214,52 @@
 				<th>DMX</th>
 				<th>THAY ĐỔI</th>
 				<th>XẾP HẠNG</th>
-			</tr>";
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+				<th>MÃ CK</th>
+				<th>NGÀY GD</th>
+				<th>GIÁ CHỐT</th>
+				<th>KHỐI LƯỢNG</th>
+				<th>KÊNH</th>
+				<th>TRẠNG THÁI</th>
+				<th>NGẮN HẠN</th>
+				<th>TRUNG HẠN</th>
+				<th>DÀI HẠN</th>
+				<th>KÊNH EMA</th>
+				<th>SỨC MẠNH</th>
+				<th>ĐIỂM MUA T3</th> 
+				<th>XU HƯỚNG</th>
+				<th>STOCHASTIC</th>
+				<th>ARSI</th>
+				<th>MFI</th>
+				<th>DMX</th>
+				<th>THAY ĐỔI</th>
+				<th>XẾP HẠNG</th>
+		</tr>
+	</tfoot>
+	<tbody>
+	
+	
+	<?php
+	require_once('conf.php');
+	
+	$conn = connectionDB();
+
+    $todayDate = new DateTime();
+	$todayDate = $todayDate->format('m/d/Y');
+    
+	$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank 
+    FROM `tbl_market_exp` WHERE `volume` > 50000 AND `pclose` > 1 
+    AND (STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN (STR_TO_DATE('".$todayDate."','%m/%d/%Y') - 3) AND STR_TO_DATE('".$todayDate."','%m/%d/%Y')) 
+    AND `coppock` IN ('UPTREND','UpT Sideways') 
+    AND (`isignal` = '-=MUA=-' OR `t3signal` = '-=MUA=-' OR `emashort` = '-=MUA=-' OR `emamid` = '-=MUA=-')";
+	
+	$result = $conn->query($sql);
+
+    //echo $sql; 
+	if ($result->num_rows > 0) {
 		 // output data of each row
 		 while($row = $result->fetch_assoc()) {
 			 $ticker = $row["ticker"];
@@ -228,103 +339,13 @@
 				 <td bgcolor=".getProperColor($dmx)."   align=\"center\">" .$dmx. "</td>
 				 <td bgcolor=".getProperColor($pl)."   align=\"center\">" .$pl. "</td>
 				 <td bgcolor=".getProperColor($rank)."   align=\"center\">" .$rank. "</td></tr>";
-				 }
-				 echo "</table>";
-	} else {
-		 echo "0 results";
+				 };
 	}
 
 	$conn->close();
 	
-	
-	function getProperColor($var)
-	{
-		if ($var == "TANG")
-			return '#ddffcc';
-		else if ($var == "GIAM")
-			return '#ffcccc';
-		else if ($var == "QUA BAN")
-			return '#FFFF00';
-		else if ($var == "QUA MUA")
-			return '#FF7F50';
-		else if ($var == "TICH LUY")
-			return '#ffff80';
-		else if ($var == "-=MANH=-")
-			return '#ebadd6';
-		else if ($var == "-=YEU=-")
-			return '#ccccff';
-		else if ($var == "-=BAN=-")
-			return '#ff9999';
-		else if ($var == "-=MUA=-")
-			return '#9fff80';
-		else if ($var == "PHAN PHOI")
-			return '#ff8080';
-		else if ($var == "UPTREND")
-			return '#9fff80';
-		else if ($var == "HOI PHUC")
-			return '#b3ffcc';
-		else if ($var == "PHONG BI")
-			return '#ccb3ff';
-		else if ($var == "KHONG CUNG")
-			return '#ffff66';
-		else if ($var == "UpT Sideways")
-			return '#ddffcc';
-		else if ($var == "DownTrend")
-			return '#ff0000';
-		else if ($var == "DnT Sideways")
-			return '#ffcccc';
-		else
-			return 	'#FFFFFF';
-	}
-
-	function convertDate($dateString){
-		$myDateTime = DateTime::createFromFormat('m/d/Y', $dateString);
-		$newDateString = $myDateTime->format('d/m/Y');
-		
-		return $newDateString;
-	}
-	function findTicker($vpazone, $vpastatus, $isignal, $t3signal, $emashort, $emamid, $coppock, $arsi, $stochastic, $mfi, $ematrend){
-		if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "-=MUA=-" || $t3signal == "-=MUA=-" || $emashort == "-=MUA=-") && ($coppock == "UPTREND" || $coppock == "UpT Sideways"))
-			return '#b3ff99';
-		else if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "-=MUA=-" || $t3signal == "-=MUA=-" || $emashort == "-=MUA=-"))
-			return '#ff9900';
-		else if($vpazone == "TICH LUY" && $vpastatus == "-=MANH=-" &&( $isignal == "TANG"))
-			return '#f2ffcc';
-		else if ($vpazone == "TICH LUY" && $emashort == "TANG" && ($coppock == "UPTREND" || $coppock == "UpT Sideways") && ($stochastic != "GIAM") )
-			return '#ddffcc';
-		else if ($emashort == "TANG" && $emamid == "TANG" && $arsi == "QUA BAN")
-			return '#ffffb3';
-		else if ($vpazone == "PHAN PHOI" && ($isignal == "GIAM" || $isignal == "-=BAN=-") && ($t3signal == "-=BAN=-") && ($stochastic == "GIAM") && ($arsi == "QUA MUA" || $mfi == "QUA MUA"))
-			return '#ffcccc';
-		else if ($vpazone == "PHAN PHOI" && ($isignal == "GIAM" || $isignal == "-=BAN=-"))
-			return '#ffcccc';
-		else if ($vpazone == "TICH LUY" && ($isignal == "-=MUA=-" || $t3signal == "-=MUA=-") && $ematrend == "PHONG BI")
-			return '#e0e0d1';
-		else if ($isignal == "-=MUA=-" && $t3signal == "-=MUA=-" && $ematrend != "GIAM")
-			return '#ff9900';
-		else if ($emashort == "-=MUA=-" && $emamid == "TANG" && $ematrend == "TANG" && $isignal == "TANG" && $vpazone != "PHAN PHOI")
-			return '#ff9900';
-        else if ((($emashort == "-=MUA=-" || $emashort == "TANG" || $vpastatus == "-=MANH=-") && $isignal == "-=MUA=-") && $vpazone != "PHAN PHOI" )
-			return '#ff9900';
-		else
-			return '#FFFFFF';
-	}
-	
-	    function viewchart($ticker){
-	        $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
-        
-	        return $newlink;
-	    }
-    
 	?>  
-	
-	
-	
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+	</tbody>
+    </table>
 </body>
 </html>

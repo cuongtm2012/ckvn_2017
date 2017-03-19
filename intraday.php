@@ -2,15 +2,19 @@
 <html lang="vi-VN">
 
 <head>
-    <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
+	<meta name="keywords" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
 	
+    <title>Trần Mạnh Cường - Chuyên gia phân tích TTCK</title>
     <link rel="stylesheet" href="css/table/bootstrap.min.css">
     <link rel="stylesheet" href="css/table/dataTables.bootstrap.min.css">
     
+    <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
     <!-- Bootstrap Core JavaScript -->
     <script src="js/table/jquery-1.12.4.js"></script>
     <script src="js/table/jquery.dataTables.min.js"></script>
@@ -28,11 +32,11 @@
 	
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
-	
+	<link rel="shortcut icon" href="images/demo/logoTMC.ico" />
 	<style>
 	.error {color: #FF0000;}
     .table{width: 1500px;max-width: 1500px;margin-bottom:20px;}.table
-	.navbar-nav{font-size: 14px;}.navbar-nav
+    .navbar-nav{font-size: 14px;}.navbar-nav
 	</style>
 	
 </head>
@@ -60,7 +64,7 @@
                         <a class="page-scroll" href="#page-top"></a>
                     </li>
                     <li>
-                        <a style= "font-size:14px" class="page-scroll" href="intraday.php">Phân tích tín hiệu</a>
+                        <a  class="page-scroll" href="intraday.php">Phân tích tín hiệu</a>
                     </li>
                     <li>
                         <a  class="page-scroll" href="marketexp.php">Phân tích thị trường</a>
@@ -76,10 +80,10 @@
                           Phân tích Wekkly <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-							<li><a  style= "font-size:14px" href="intradaywl.php">Phân tích tín hiệu</a></li>
-							<li><a  style= "font-size:14px" href="marketexpwl.php">Phân tích thị trường</a></li>
-							<li><a  style= "font-size:14px" href="chartwl.php">Phân tích mô hình</a></li>
-							<li><a  style= "font-size:14px" href="t3tradewl.php">Phân tích tín hiệu mua/bán</a></li>
+							<li><a href="intradaywl.php">Phân tích tín hiệu</a></li>
+							<li><a href="marketexpwl.php">Phân tích thị trường</a></li>
+							<li><a href="chartwl.php">Phân tích mô hình</a></li>
+							<li><a href="t3tradewl.php">Phân tích tín hiệu mua/bán</a></li>
                         </ul>
                     </li>
 					<li role="presentation" class="dropdown">
@@ -87,8 +91,9 @@
                           Danh mục theo dõi <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
-							<li><a  style= "font-size:14px" href="danhmuc.php">Danh mục theo dõi</a></li>
-							<li><a  style= "font-size:14px" href="tinhieutot.php">Danh mục tín hiệu tốt</a></li>
+							<li><a href="danhmuc.php">Danh mục theo dõi</a></li>
+							<li><a href="tinhieutot.php">Danh mục tín hiệu tốt</a></li>
+                            <li><a target = '_blank' href="https://docs.google.com/forms/d/e/1FAIpQLSfmLX6GM2-wctqkSPVWiU9El2SUyjGC2-u7o-nCUNXrBpnkaA/viewform?c=0&w=1">Check list MUA</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -216,7 +221,7 @@
 
     </br>
     
-    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="example" class="table table-striped table-bordered" cellspacing="0">
         <thead>
             <tr>
 				<th>MÃ CK</th>
@@ -308,12 +313,11 @@
         				 <td width=\"80px\" bgcolor=".getProperColor($mfi)."   align=\"center\">" . $row["mfi"]. "</td>
         				 <td align=\"center\">" . $row["score"]. "</td></tr>";
         				 }
-        				 echo "</table>";
         	}
                     
         	$conn->close();
         	?>  
-    </tbody>
+		</tbody>
     </table>
 </body>
 

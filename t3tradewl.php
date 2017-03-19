@@ -2,23 +2,32 @@
 <html lang="vi-VN">
 
 <head>
-	<!-- // ket hop cach danh T3 + Nivara -->
-    <meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="description" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
+	<meta name="keywords" content="Trần Mạnh Cường - Chuyên gia phân tích TTCK - 0934 696 594" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
 	
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min - module.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/table/bootstrap.min.css">
+    <link rel="stylesheet" href="css/table/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
     
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.js"></script>
-    <script src="js/jquery.min.js"></script>
+    <script src="js/table/jquery-1.12.4.js"></script>
+    <script src="js/table/jquery.dataTables.min.js"></script>
+    <script src="js/table/dataTables.bootstrap.min.js"></script>
     <script src="js/moment.min.js"></script>
     <script src="js/bootstrap-datetimepicker.min.js"></script>
-
+    <script src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/thejsfile.js"></script>
+    <script>
+	$(document).ready(function() {
+		$('#example').DataTable();
+	} );
+    </script>
     <!-- Custom CSS -->
     <link href="css/full.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/demo/logoTMC.ico" />
@@ -101,6 +110,7 @@
                         <ul class="dropdown-menu">
 							<li><a href="danhmuc.php">Danh mục theo dõi</a></li>
 							<li><a href="tinhieutot.php">Danh mục tín hiệu tốt</a></li>
+                            <li><a target = '_blank' href="https://docs.google.com/forms/d/e/1FAIpQLSfmLX6GM2-wctqkSPVWiU9El2SUyjGC2-u7o-nCUNXrBpnkaA/viewform?c=0&w=1">Check list MUA</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -112,25 +122,63 @@
 	</br>
 
 	<?php
-	
-	// define variables and set to empty values
-	$nameErr = "";
-	$pdate = "";
-	$weeklyDatePickerErr = "";
-	$weeklyDatePicker = $mack = "";
-    $fdate = $pdate = "";
-	
+		// define variables and set to empty values
+		$nameErr = "";
+		$pdate = "";
+		$weeklyDatePickerErr = "";
+		$weeklyDatePicker = "";
+		$fdate = $pdate = "";
 		
+			
 		if ($_SERVER["REQUEST_METHOD"] == "POST") {
 			$weeklyDatePicker = test_input($_POST["weeklyDatePicker"]);
-			$mack = test_input($_POST["mack"]);
 		}
-	  
-	  function test_input($data) {
+		  
+		function test_input($data) {
 		  $data = trim($data);
 		  $data = stripslashes($data);
 		  $data = htmlspecialchars($data);
 		  return $data;
+		}
+		function getProperColor($var)
+		{
+			if ($var == "Buy")
+				return '#7FFF00';
+			else if ($var == "Sell")
+				return '#FF4500';
+			else
+				return 	'#FFFFFF';
+		}
+		function fillColor($var){
+			if ($var == "UPTREND")
+				return '#9fff80';
+			else if ($var == "UpT Sideways")
+				return '#ddffcc';
+			else if ($var == "DownTrend")
+				return '#ff0000';
+			else if ($var == "DnT Sideways")
+				return '#ffcccc';
+			else
+				return 	'#FFFFFF';
+		}
+		function convertTrade($var)
+		{
+			if ($var == "Buy")
+				return "MUA";
+			else if ($var == "Sell")
+				return "BAN";
+		}
+		
+		function convertDate($dateString){
+			$myDateTime = DateTime::createFromFormat('m/d/Y', $dateString);
+			$newDateString = $myDateTime->format('d/m/Y');
+			
+			return $newDateString;
+		}
+		function viewchart($ticker){
+			$newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
+			
+			return $newlink;
 		}
 	?>
 
@@ -151,11 +199,6 @@
                     </div>
                 </td>
 				<td>*</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td><h4> CHỌN MÃ CK: </h4></td>
-				<td> <input type="text" name="mack" class="form-control"></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
 			</tr>
 		</table>	  
@@ -168,51 +211,10 @@
 
 	</br>
 	
-	<?php
-	require_once('conf.php');
-	
-	if($weeklyDatePicker != NULL){
-	   
-       $fdate = substr($weeklyDatePicker, 0, 10);
-       $tdate = substr($weeklyDatePicker, 12);
-
-	   $myDateTime = DateTime::createFromFormat('m-d-Y', $fdate); 
-	   $fdate = $myDateTime->format('m/d/Y');
-        
-       $myDateTime = DateTime::createFromFormat('m-d-Y', trim($tdate));
-	   $tdate = $myDateTime->format('m/d/Y');
-	} else {
-		$tdate = new DateTime();
-		$tdate = $tdate->format('m/d/Y');
-        
-        $myfdate = new DateTime();
-		$myfdate = $myfdate->format('m/d/Y');
-	}
-	
-	$conn = connectionDB();
-	
-	$sql = "SELECT `tbl_market_exp_w`.`ticker`, `tbl_market_exp_w`.`datetime`, `tbl_market_exp_w`.`pclose` , `tbl_market_exp_w`.`volume`, `tbl_market_exp_w`.`coppock`
-    , `tbl_nivara_w`.`trade` AS nivaratrade, `tbl_t3trade_w`.`trade` AS t3trade, `tbl_harmonic_w`.`trade` AS harmonic 
-    , `tbl_guppy_w`.`trade` AS guppytrade, `tbl_rainbow_w`.`trade` AS rainbowtrade
-FROM `tbl_market_exp_w` 
-LEFT JOIN `tbl_t3trade_w` ON `tbl_market_exp_w`.`ticker` = `tbl_t3trade_w`.`ticker` AND `tbl_market_exp_w`.`datetime` = `tbl_t3trade_w`.`date` 
-LEFT JOIN `tbl_nivara_w` ON  `tbl_market_exp_w`.`ticker` = `tbl_nivara_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_nivara_w`.`date` 
-LEFT JOIN `tbl_harmonic_w` ON `tbl_market_exp_w`.`ticker` = `tbl_harmonic_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_harmonic_w`.`date`
-LEFT JOIN `tbl_guppy_w` ON `tbl_market_exp_w`.`ticker` = `tbl_guppy_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_guppy_w`.`date`
-LEFT JOIN `tbl_rainbow_w` ON `tbl_market_exp_w`.`ticker` = `tbl_rainbow_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_rainbow_w`.`date`
- 
-WHERE `tbl_market_exp_w`.`volume` > 20000 
-AND (STR_TO_DATE(`tbl_t3trade_w`.`date`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w`)
-AND STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y'))
-ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_market_exp_w`.`ticker` ASC";
-	$result = $conn->query($sql);
-
-	// echo $sql; 
-	
-	if ($result->num_rows > 0) {
-		 echo "<table class=\"table\">
-			<tr>
-				<th align=\"center\">MÃ CK</th>
+	<table id="example" class="table table-striped table-bordered" cellspacing="0">
+	<thead>
+		<tr>
+				<th>MÃ CK</th>
 				<th>NGÀY GD</th>
 				<th>ĐIỂM MUA BÁN</th>
 				<th>KHỐI LƯỢNG</th>
@@ -222,83 +224,100 @@ ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_m
                 <th>MUA/BÁN (G)</th>
                 <th>MUA/BÁN (R)</th>
 				<th>XU HƯỚNG</th>
-			</tr>";
-		 // output data of each row
-		 while($row = $result->fetch_assoc()) {
-			 $ticker = $row["ticker"];
-			 $datetime = $row["datetime"];
-			 $volume = $row["volume"];
-			 $t3trade = $row["t3trade"];
-			 $nivaratrade = $row["nivaratrade"];
-             $guppytrade = $row["guppytrade"];
-             $rainbowtrade = $row["rainbowtrade"];
-			 $close = $row["pclose"];
-			 $coppock = $row["coppock"];
-             $harmonic = $row["harmonic"];
-			 
-			 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"
-                     || $harmonic == "Buy" || $harmonic == "Sell"){
-				 echo "<tr>
-				 <td width=\"100px\"> <a target = '_blank' href=".viewchart($ticker)."> ". $row["ticker"]." </a></td>
-				 <td width=\"100px\" align=\"center\">" .convertDate($datetime). "</td>
-				 <td width=\"150px\" align=\"center\">" . $row["pclose"]. "</td>
-				 <td width=\"100px\" align=\"right\">" .number_format($volume). "</td>
-				 <td bgcolor=".getProperColor($t3trade)." width=\"150px\" align=\"center\">" . convertTrade($t3trade). "</td>
-				 <td bgcolor=".getProperColor($nivaratrade)." width=\"150px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
-                 <td bgcolor=".getProperColor($harmonic)." width=\"150px\" align=\"center\">" . convertTrade($harmonic). "</td>
-                 <td bgcolor=".getProperColor($guppytrade)." width=\"150px\" align=\"center\">" . convertTrade($guppytrade). "</td>
-                 <td bgcolor=".getProperColor($rainbowtrade)." width=\"150px\" align=\"center\">" . convertTrade($rainbowtrade). "</td>
-				 <td bgcolor=".fillColor($coppock)." width=\"200px\" align=\"center\">" . $row["coppock"]. "</td></tr>";
-				 }
-			 }
-		echo "</table>";
-	} else {
-		 echo "0 results";
-	}
-
-	$conn->close();
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+				<th>MÃ CK</th>
+				<th>NGÀY GD</th>
+				<th>ĐIỂM MUA BÁN</th>
+				<th>KHỐI LƯỢNG</th>
+				<th>MUA/BÁN - T3</th>
+				<th>MUA/BÁN (Nivara)</th>
+                <th>MUA/BÁN (Harmonic)</th>
+                <th>MUA/BÁN (G)</th>
+                <th>MUA/BÁN (R)</th>
+				<th>XU HƯỚNG</th>
+		</tr>
+	</tfoot>
+	<tbody>
 	
-	
-	function getProperColor($var)
-	{
-		if ($var == "Buy")
-			return '#7FFF00';
-		else if ($var == "Sell")
-			return '#FF4500';
-		else
-			return 	'#FFFFFF';
-	}
-	function fillColor($var){
-		if ($var == "UPTREND")
-			return '#9fff80';
-		else if ($var == "UpT Sideways")
-			return '#ddffcc';
-		else if ($var == "DownTrend")
-			return '#ff0000';
-		else if ($var == "DnT Sideways")
-			return '#ffcccc';
-		else
-			return 	'#FFFFFF';
-	}
-	function convertTrade($var)
-	{
-		if ($var == "Buy")
-			return "MUA";
-		else if ($var == "Sell")
-			return "BAN";
-	}
-	
-	function convertDate($dateString){
-		$myDateTime = DateTime::createFromFormat('m/d/Y', $dateString);
-		$newDateString = $myDateTime->format('d/m/Y');
+	<?php
+		require_once('conf.php');
 		
-		return $newDateString;
-	}
-    function viewchart($ticker){
-        $newlink = "https://banggia.vndirect.com.vn/chart/?symbol=" . $ticker;
-        
-        return $newlink;
-    }
+		if($weeklyDatePicker != NULL){
+		   
+		   $fdate = substr($weeklyDatePicker, 0, 10);
+		   $tdate = substr($weeklyDatePicker, 12);
+
+		   $myDateTime = DateTime::createFromFormat('m-d-Y', $fdate); 
+		   $fdate = $myDateTime->format('m/d/Y');
+			
+		   $myDateTime = DateTime::createFromFormat('m-d-Y', trim($tdate));
+		   $tdate = $myDateTime->format('m/d/Y');
+		} else {
+			$tdate = new DateTime();
+			$tdate = $tdate->format('m/d/Y');
+			
+			$myfdate = new DateTime();
+			$myfdate = $myfdate->format('m/d/Y');
+		}
+		
+		$conn = connectionDB();
+		
+		$sql = "SELECT `tbl_market_exp_w`.`ticker`, `tbl_market_exp_w`.`datetime`, `tbl_market_exp_w`.`pclose` , `tbl_market_exp_w`.`volume`, `tbl_market_exp_w`.`coppock`
+		, `tbl_nivara_w`.`trade` AS nivaratrade, `tbl_t3trade_w`.`trade` AS t3trade, `tbl_harmonic_w`.`trade` AS harmonic 
+		, `tbl_guppy_w`.`trade` AS guppytrade, `tbl_rainbow_w`.`trade` AS rainbowtrade
+		FROM `tbl_market_exp_w` 
+		LEFT JOIN `tbl_t3trade_w` ON `tbl_market_exp_w`.`ticker` = `tbl_t3trade_w`.`ticker` AND `tbl_market_exp_w`.`datetime` = `tbl_t3trade_w`.`date` 
+		LEFT JOIN `tbl_nivara_w` ON  `tbl_market_exp_w`.`ticker` = `tbl_nivara_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_nivara_w`.`date` 
+		LEFT JOIN `tbl_harmonic_w` ON `tbl_market_exp_w`.`ticker` = `tbl_harmonic_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_harmonic_w`.`date`
+		LEFT JOIN `tbl_guppy_w` ON `tbl_market_exp_w`.`ticker` = `tbl_guppy_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_guppy_w`.`date`
+		LEFT JOIN `tbl_rainbow_w` ON `tbl_market_exp_w`.`ticker` = `tbl_rainbow_w`.`ticker` AND  `tbl_market_exp_w`.`datetime` = `tbl_rainbow_w`.`date`
+		 
+		WHERE `tbl_market_exp_w`.`volume` > 20000 
+		AND (STR_TO_DATE(`tbl_t3trade_w`.`date`,'%m/%d/%Y') = (SELECT MAX(STR_TO_DATE(`datetime`,'%m/%d/%Y')) FROM `tbl_market_exp_w`)
+		AND STR_TO_DATE(`datetime`,'%m/%d/%Y') BETWEEN STR_TO_DATE('".$fdate."','%m/%d/%Y') AND STR_TO_DATE('".$tdate."','%m/%d/%Y'))
+		ORDER BY `tbl_market_exp_w`.`datetime` ASC, `tbl_market_exp_w`.`coppock`, `tbl_market_exp_w`.`ticker` ASC";
+		$result = $conn->query($sql);
+
+		// echo $sql; 
+		
+		if ($result->num_rows > 0) {
+			 // output data of each row
+			 while($row = $result->fetch_assoc()) {
+				 $ticker = $row["ticker"];
+				 $datetime = $row["datetime"];
+				 $volume = $row["volume"];
+				 $t3trade = $row["t3trade"];
+				 $nivaratrade = $row["nivaratrade"];
+				 $guppytrade = $row["guppytrade"];
+				 $rainbowtrade = $row["rainbowtrade"];
+				 $close = $row["pclose"];
+				 $coppock = $row["coppock"];
+				 $harmonic = $row["harmonic"];
+				 
+				 if($t3trade == "Buy" || $t3trade == "Sell" || $nivaratrade == "Buy" || $nivaratrade == "Sell"
+						 || $harmonic == "Buy" || $harmonic == "Sell"){
+					 echo "<tr>
+					 <td width=\"100px\"> <a target = '_blank' href=".viewchart($ticker)."> ". $row["ticker"]." </a></td>
+					 <td width=\"100px\" align=\"center\">" .convertDate($datetime). "</td>
+					 <td width=\"150px\" align=\"center\">" . $row["pclose"]. "</td>
+					 <td width=\"100px\" align=\"right\">" .number_format($volume). "</td>
+					 <td bgcolor=".getProperColor($t3trade)." width=\"150px\" align=\"center\">" . convertTrade($t3trade). "</td>
+					 <td bgcolor=".getProperColor($nivaratrade)." width=\"150px\" align=\"center\">" . convertTrade($nivaratrade). "</td>
+					 <td bgcolor=".getProperColor($harmonic)." width=\"150px\" align=\"center\">" . convertTrade($harmonic). "</td>
+					 <td bgcolor=".getProperColor($guppytrade)." width=\"150px\" align=\"center\">" . convertTrade($guppytrade). "</td>
+					 <td bgcolor=".getProperColor($rainbowtrade)." width=\"150px\" align=\"center\">" . convertTrade($rainbowtrade). "</td>
+					 <td bgcolor=".fillColor($coppock)." width=\"200px\" align=\"center\">" . $row["coppock"]. "</td></tr>";
+					 }
+				 };
+		}
+
+		$conn->close();
+
 	?>  
+	</tbody>
+    </table>
 </body>
 </html>
