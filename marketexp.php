@@ -121,6 +121,7 @@
 				  } else {
 					$pdate = test_input($_POST["pdate"]);
 					$tdate = test_input($_POST["tdate"]);
+					$mack = test_input($_POST["mack"]);
 				  }
 		  }
 		  
@@ -222,7 +223,15 @@
 				<td   style="width:150px"><h4>ĐẾN NGÀY : </h4></td>
 				<td   style="width:180px"><input type="date" name="tdate" id="theDate1" value="<?php echo $tdate;?>" class="form-control"> </td>
 				<td>*</td>
+			</tr>
+			<tr>
+				<td width="10%"></td>
+				<td  style="width:150px"><h4> CHỌN MÃ CK: </h4></td>
+				<td  style="width:180px"> <input type="text" name="mack" class="form-control"></td>
+				<td></td>
+				<td></td>
 				<td align="center"> <input type="submit" name="submit" value="Submit" class="btn btn-primary"> </td>
+				<td></td>
 			</tr>
 		</table>
 		<table>
@@ -304,19 +313,29 @@
 			
 			$conn = connectionDB();
 
-			if(!empty($pdate) && !empty($tdate)){
+			if(empty($mack)){
 				if($pdate == $tdate){
 					$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 					FROM `tbl_market_exp` WHERE `volume` > 50000 AND `pclose` > 1
-					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = STR_TO_DATE('".$pdate."','%m/%d/%Y') 
-					ORDER BY rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
+					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = STR_TO_DATE('".$pdate."','%m/%d/%Y')";
 				} else{
 					$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
 					FROM `tbl_market_exp` WHERE `volume` > 50000 AND `pclose` > 1
-					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y')
-					ORDER BY STR_TO_DATE(`datetime`,'%m/%d/%Y') DESC, rank DESC, `t3signal` DESC, `isignal` DESC , `vpazone` DESC, `vpastatus` DESC, `emashort` DESC, `emamid` DESC, `emalong` DESC";
+					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y')";
 				}
-			} 
+			} else {
+				if($pdate == $tdate){
+					$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
+					FROM `tbl_market_exp` WHERE `volume` > 5000 AND `pclose` > 1
+					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') = STR_TO_DATE('".$pdate."','%m/%d/%Y')
+					AND `ticker` = '".$mack."'";
+				} else {
+					$sql = "SELECT `ticker`, `datetime`, `pclose`, `volume`, `vpazone`, `vpastatus`, `emashort`, `emamid`, `emalong`, `ematrend`, `isignal`, `t3signal`, `bolband`, `macd`, `macdrsi`, `coppock`, `stochastic`, `arsi`, `mfi`, `dmx`, `pl`, CAST(`rank` AS UNSIGNED) AS rank
+					FROM `tbl_market_exp` WHERE `volume` > 5000 AND `pclose` > 1
+					AND STR_TO_DATE(`datetime`,'%m/%d/%Y') between STR_TO_DATE('".$pdate."','%m/%d/%Y') and STR_TO_DATE('".$tdate."','%m/%d/%Y')
+					AND `ticker` = '".$mack."'";
+				}
+			}
 			
 			$result = $conn->query($sql);
 
